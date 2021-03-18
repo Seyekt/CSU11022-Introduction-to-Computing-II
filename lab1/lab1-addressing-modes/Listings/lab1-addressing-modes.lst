@@ -1,0 +1,258 @@
+
+
+
+ARM Macro Assembler    Page 1 
+
+
+    1 00000000         ;
+    2 00000000         ; CS1022 Introduction to Computing II 2018/2019
+    3 00000000         ; Lab 1 - Addressing Modes Partial Solution
+    4 00000000         ;
+    5 00000000         
+    6 00000000 0000000A 
+                       N       EQU              10
+    7 00000000         
+    8 00000000                 AREA             globals, DATA, READWRITE
+    9 00000000         
+   10 00000000         ; N word-size values
+   11 00000000         
+   12 00000000 00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00 00 00 
+              00       ARRAY   SPACE            N*4         ; N words (4 bytes 
+                                                            each)
+   13 00000028         
+   14 00000028         
+   15 00000028                 AREA             RESET, CODE, READONLY
+   16 00000000                 ENTRY
+   17 00000000         
+   18 00000000         ; for convenience, let's initialise test array [0, 1, 2,
+                        ... , N-1]
+   19 00000000         
+   20 00000000 E59F0044        LDR              R0, =ARRAY
+   21 00000004 E3A01000        LDR              R1, =0
+   22 00000008 E351000A 
+                       L1      CMP              R1, #N
+   23 0000000C 2A000002        BHS              L2
+   24 00000010 E7801101        STR              R1, [R0, R1, LSL #2]
+   25 00000014 E2811001        ADD              R1, R1, #1
+   26 00000018 EAFFFFFA        B                L1
+   27 0000001C         L2
+   28 0000001C         
+   29 0000001C         ; initialise registers for your program
+   30 0000001C         
+   31 0000001C E59F0028        LDR              R0, =ARRAY  ; array start addre
+                                                            ss
+   32 00000020 E3A0100A        LDR              R1, =N      ; size of array (wo
+                                                            rds)
+   33 00000024         
+   34 00000024         ; your program goes here
+   35 00000024         
+   36 00000024         ; Q.1.1
+   37 00000024         ; immediate offset
+   38 00000024         ; 83 instructions
+   39 00000024         
+   40 00000024 E3A04000        MOV              R4, #0      ; R4 = 0 / Count
+
+
+
+ARM Macro Assembler    Page 2 
+
+
+   41 00000028 E1540001 
+                       L3      CMP              R4, R1      ; CMP R4 w/ R1 
+   42 0000002C 2A000005        BHS              L4          ; Is the count equa
+                                                            l to the array? Whe
+                                                            n it is, finish
+   43 00000030 E5905000        LDR              R5, [R0]    ; Load the (first) 
+                                                            value from the arra
+                                                            y
+   44 00000034 E0060595        MUL              R6, R5, R5  ; Square that value
+                                                            
+   45 00000038 E5806000        STR              R6, [R0]    ; Store that value 
+                                                            back and increment 
+                                                            to to next index (w
+                                                            ord up) to load nex
+                                                            t value
+   46 0000003C E2800004        ADD              R0, R0, #4  ; Increment address
+                                                             by 4
+   47 00000040 E2844001        ADD              R4, R4, #1  ; Increase count
+   48 00000044 EAFFFFF7        B                L3
+   49 00000048         L4
+   50 00000048         
+   51 00000048         ; Q.1.2
+   52 00000048         ; Immediate Offset and Register Offset
+   53 00000048         
+   54 00000048         ;MOV R4, #0   ; R4 = 0 / Count
+   55 00000048         ;L3 CMP R4, R1   ; CMP R4 w/ R1 
+   56 00000048         ;BHS L4    ; Is the count equal to the array? When it is
+                       , finish
+   57 00000048         ;MOV R8, #4
+   58 00000048         ;MUL R7, R4, R8  ; Multiply the count by 4
+   59 00000048         ;LDR R5, [R0, R7] ; Load the (first) value from the arra
+                       y
+   60 00000048         ;MUL R6, R5, R5  ; Square that value
+   61 00000048         ;STR R6, [R0, R7] ; Store that value back and increment 
+                       to to next index (word up) to load next value
+   62 00000048         ;ADD R4, R4, #1  ; Increase count
+   63 00000048         ;B L3    ; Repeat till finished array
+   64 00000048         ;L4
+   65 00000048         
+   66 00000048         ; Q.1.3
+   67 00000048         ; Immediate Offset and Scaled Register Offset (e.g. [Rn,
+                        Rm, LSL #shift])
+   68 00000048         
+   69 00000048         ;MOV R4, #0     ; R4 = 0 / Count 
+   70 00000048         ;L3 CMP R4, R1     ; CMP R4 w/ R1 
+   71 00000048         ;BHS L4      ; Is the count equal to the array? When it 
+                       is, finish
+   72 00000048         ;LDR R5, [R0, R4, LSL #2] ; Load the (first) value from 
+                       the array
+   73 00000048         ;MUL R6, R5, R5    ; Square that value
+   74 00000048         ;STR R6, [R0, R4, LSL #2] ; Store that value back and in
+                       crement to to next index (word up) to load next value
+   75 00000048         ;ADD R4, R4, #1    ; Increase count
+   76 00000048         ;B L3      ; Repeat till finished array
+   77 00000048         ;L4
+   78 00000048         
+   79 00000048         ; Q.1.4
+   80 00000048         ; Immediate Offset and Pre- or Post-indexed (e.g. [Rn], 
+                       #offset or [Rn,#offset]!)
+
+
+
+ARM Macro Assembler    Page 3 
+
+
+   81 00000048         
+   82 00000048         ;;MOV R4, #0    ; R4 = 0 / Count
+   83 00000048         ;;L3 CMP R4, R1    ; CMP R4 w/ R1 
+   84 00000048         ;;BHS L4     ; Is the count equal to the array? When it 
+                       is, finish
+   85 00000048         ;;LDR R5, [R0]   ; Load the (first) value from the array
+                       
+   86 00000048         ;;MUL R6, R5, R5   ; Square that value
+   87 00000048         ;;STR R6, [R0], #4  ; Store that value back and incremen
+                       t to to next index (word up) to load next value
+   88 00000048         ;;ADD R4, R4, #1   ; Increase count
+   89 00000048         ;;B L3     ; Repeat till finished array
+   90 00000048         ;;L4 
+   91 00000048         
+   92 00000048         
+   93 00000048 EAFFFFFE 
+                       STOP    B                STOP
+   94 0000004C         
+   95 0000004C                 END
+              00000000 
+Command Line: --debug --xref --diag_suppress=9931 --apcs=interwork --depend=.\o
+bjects\lab1-addressing-modes.d -o.\objects\lab1-addressing-modes.o -IC:\Keil_v5
+\ARM\RV31\INC -IC:\Keil_v5\ARM\CMSIS\Include -IC:\Keil_v5\ARM\Inc\Philips --pre
+define="__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 516" --list=.\listin
+gs\lab1-addressing-modes.lst lab1-addressing-modes.s
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+ARRAY 00000000
+
+Symbol: ARRAY
+   Definitions
+      At line 12 in file lab1-addressing-modes.s
+   Uses
+      At line 20 in file lab1-addressing-modes.s
+      At line 31 in file lab1-addressing-modes.s
+
+globals 00000000
+
+Symbol: globals
+   Definitions
+      At line 8 in file lab1-addressing-modes.s
+   Uses
+      None
+Comment: globals unused
+2 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Relocatable symbols
+
+L1 00000008
+
+Symbol: L1
+   Definitions
+      At line 22 in file lab1-addressing-modes.s
+   Uses
+      At line 26 in file lab1-addressing-modes.s
+Comment: L1 used once
+L2 0000001C
+
+Symbol: L2
+   Definitions
+      At line 27 in file lab1-addressing-modes.s
+   Uses
+      At line 23 in file lab1-addressing-modes.s
+Comment: L2 used once
+L3 00000028
+
+Symbol: L3
+   Definitions
+      At line 41 in file lab1-addressing-modes.s
+   Uses
+      At line 48 in file lab1-addressing-modes.s
+Comment: L3 used once
+L4 00000048
+
+Symbol: L4
+   Definitions
+      At line 49 in file lab1-addressing-modes.s
+   Uses
+      At line 42 in file lab1-addressing-modes.s
+Comment: L4 used once
+RESET 00000000
+
+Symbol: RESET
+   Definitions
+      At line 15 in file lab1-addressing-modes.s
+   Uses
+      None
+Comment: RESET unused
+STOP 00000048
+
+Symbol: STOP
+   Definitions
+      At line 93 in file lab1-addressing-modes.s
+   Uses
+      At line 93 in file lab1-addressing-modes.s
+Comment: STOP used once
+6 symbols
+
+
+
+ARM Macro Assembler    Page 1 Alphabetic symbol ordering
+Absolute symbols
+
+N 0000000A
+
+Symbol: N
+   Definitions
+      At line 6 in file lab1-addressing-modes.s
+   Uses
+      At line 12 in file lab1-addressing-modes.s
+      At line 22 in file lab1-addressing-modes.s
+      At line 32 in file lab1-addressing-modes.s
+
+1 symbol
+343 symbols in table
